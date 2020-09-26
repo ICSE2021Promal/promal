@@ -1,6 +1,6 @@
 # Window Transition Learning
 
-Window transition learning contains the deep learning model to learn the transition relationship between a widget and an app window. The model consists of two embedding models and a link predictor. The two kinds of embedding models are the widget embedding model and the window embedding model. The embedding models use DenseNet to extract image features, a pre-trained Word2Vec model to extract text features and LSTM to extract features of UI layout tree. The link predictor is designed by leveraging the neural tensor network (NTN).
+Window transition learning contains the deep learning model to learn the transition relationship between a widget and an app window. The model consists of two embedding models and a link predictor. The two kinds of embedding models are the widget embedding model and the window embedding model. The embedding models use DenseNet to extract image features, a pre-trained Word2Vec model to extract text features and LSTM to extract features of UI layout trees. The link predictor is designed by leveraging the neural tensor network (NTN).
 
 This is an example prediction using the window transition model. The screen snapshots, texts and UI layout trees of the source window and the target window are shown. The image, text and UI layout information of the source widget are highlighted with red frames.
 
@@ -15,7 +15,7 @@ This folder mainly contains the model training and predicting codes. It also inc
 + fine_tune.py: load the pre-processed data and fine tune the pre_trained model.
 + pre_train.py: load the pre-processed data collected by Paladin and pre-trained the model.
 + predict.py: load the pre-trained model and predict from the pre-processed data.
-+ preprocessing.py: to pre-process the groundtruth data, e.g., splitting data and save data as numpy files.
++ preprocessing.py: to pre-process the ground truth data, e.g., splitting data and save data as numpy files.
 + preprocessing_static.py: to pre-process the data collected by static analysis tools and save pre-processed data as numpy files.
 + model: the trained model to make window transition prediction.
 
@@ -51,7 +51,7 @@ python pre-train.py --data_dir <DATASET_DIR> --paladin_dir <PALADIN_DIR> --outpu
 
 ### Pre-process for fine-tuning and prediction
 
-Pre-process the groundtruth data and the data collected by static analysis tools and save the data as numpy files. It also splits the groundtruth data into training and testing sets for 10-fold cross validation.
+Pre-process the groundtruth data and the data collected by static analysis tools and save the data as numpy files. It also splits the ground truth data into training and testing sets for 10-fold cross validation.
 
 + Input.
 Groundtruth data and the data collected by static analysis tools. The Word2Vec model and the tag dict introduced in the [Pre-Training Entry Point](https://github.com/ICSE2021Promal/Promal/tree/master/WindowTransitionLearning#pre-train).
@@ -68,7 +68,7 @@ python preprocessing_static.py --data_dir <DATASET_DIR> --static_dir <STATIC_DIR
 
 ### Fine-tune
 
-Fine tune the pre-trained model with groundtruth data.
+Fine tune the pre-trained model with ground truth data.
 
 + Input.
 Directory to pre-processed data directory and pre-trained model.
