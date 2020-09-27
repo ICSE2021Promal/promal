@@ -1,4 +1,4 @@
-# Window Transition Learning
+# Window Transition Prediction
 
 Window transition learning contains the deep learning model to learn the transition relationship between a widget and an app window. The model consists of two embedding models and a link predictor. The two kinds of embedding models are the widget embedding model and the window embedding model. The embedding models use DenseNet to extract image features, a pre-trained Word2Vec model to extract text features and LSTM to extract features of UI layout trees. The link predictor is designed by leveraging the neural tensor network (NTN).
 
