@@ -23,7 +23,7 @@ We propose ProMal, a “tribrid analysis” approach to construct a WTG for an a
 
 ProMal contains three major components.
 
-1. The first step is to perform static WTG analysis on Android apps with **GATOR**, a state-of-the-art program analysis toolkit for Android. The static WTG analysis will generate a *.wtg.dot* file for each apk, which will further be used as input in the following steps. The **GATOR** toolkit and detailed instruction is available on their [website](http://web.cse.ohio-state.edu/presto/software/gator/).  
+1. The first step is to perform static WTG analysis on Android apps with **GATOR**, a state-of-the-art program analysis toolkit for Android. The static WTG analysis will generate a *.wtg.dot* file for each apk, which will further be used as input in the following steps. The **GATOR** toolkit and detailed instruction is available on their [website](http://web.cse.ohio-state.edu/presto/software/gator/). Also, we provide a copy of **GATOR** used in our project and related scripts in [Static WTG Analysis](StaticWTGAnalysis).  
 
 2. The second step is to perform dynamic WTG analysis on Android apps with **Paladin**, a state-of-the-art app exploration tool. Detailed instruction is shown in [Dynamic WTG Analysis](DynamicWTGAnalysis).  
 
