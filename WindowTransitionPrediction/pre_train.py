@@ -479,7 +479,7 @@ for epoch in range(7):
         else:
             p.append(0)
     p = np.array(p)
-    print(classification_report(shuffled_labels_t, p))
+    print(classification_report(shuffled_labels_t, p, digits=4))
     del p, pred, feature_array, shuffled_pair_t, shuffled_labels_t
 
     model.save(args.output_dir + "pretrained_model.h5")

@@ -193,7 +193,7 @@ tmp_np = np.array(uitree_list2)
 t_tmp_np = []
 for eachuitree in uitree_list2:
     ttt = []
-    for eachtag in eachuitree:
+    for eachtag in eachuitree.split(" "):
         embedding = all_tags_dict.get(eachtag, None)
         if embedding is not None:
             ttt.append(embedding)
@@ -258,230 +258,51 @@ image_list, uitree_list2, text_list, other_list = [], [], [], []
 w_image_list, w_uitree_list, w_text_list, w_other_list = [], [], [], []
 activity_index_list, widget_index_list = [], []
 app_list = os.listdir(groundtruth_path)
+
 for i in range(10):
     train_app_list = []
     test_app_list = []
-    for j in range(len(os.list(args.groundtruth_dir + "XML/"))):
+    for j in range(40):
         if j % 10 != i:
             train_app_list.append(app_list[j][:-4])
         else:
             test_app_list.append(app_list[j][:-4])
-    activity_id, widget_id = 0, 0
-    image_list, uitree_list2, text_list, other_list = [], [], [], []
-    w_image_list, w_uitree_list, w_text_list, w_other_list = [], [], [], []
-    activity_id_list, widget_id_list = [], []
-    # training data set
-    for eachapp in train_app_list:
-        xmllist = os.listdir(args.groundtruth_dir + "/XML/" + eachapp)
+
+    activity_id_list_t, widget_id_list_t = [], []
+    for eachapp in test_app_list:
+        print("test", eachapp)
+        xmllist = os.listdir(train_path + "XML/" + eachapp)
         for eachxml in xmllist:
             if eachxml[-4:] != ".xml":
                 continue
             # widget information
-            DOMTree = xml.dom.minidom.parse(args.groundtruth_dir + "/XML/" + eachapp + "/" + eachxml)
+            DOMTree = xml.dom.minidom.parse(train_path + "XML/" + eachapp + "/" + eachxml)
             collection = DOMTree.documentElement
             for each in collection.getElementsByTagName("node"):
                 resource_id = each.getAttribute('resource-id')
-                wclass = each.getAttribute('class').split('.')[-1]
-                text = each.getAttribute('text')
                 bounds = each.getAttribute('bounds')
-                x, y, width, height = get_other(bounds)
-                total, cnt = get_text(text)
-                img = crop_image(args.groundtruth_dir + "/Screenshot/" + eachapp + "/" + eachxml[:-4] + ".png", x, y, width, height)
-                w_image_list.append(img)
-                w_text_list.append(total)
-                w_other_list.append([x, y, width, height])
-                w_uitree_list.append(wclass)
-                widget_id_list.append(widget_list.index(eachapp + "/" + eachxml[:-4] + ": " +resource_id+": "+ bounds))
-            # activity information
-            image_list.append(
-                get_image(args.groundtruth_dir + "/Screenshot/" + eachapp + "/" + eachxml[:-4] + ".png"))
-            tree = ET.ElementTree(file=args.groundtruth_dir + "/XML/" + eachapp + "/" + eachxml)
-            root = tree.getroot()
-            total_cnt, total_text, total_other, total_tag = get_tags(root[0])
-            uitree_list2.append(total_tag)
-            other_list.append(total_other)
-            text_list.append(total_text)
-            activity_id_list.append(activity_list.index(eachapp + "/" + eachxml[:-4]))
-    other_np = pad_sequences(np.array(other_list), maxlen=128, dtype='float32', padding='post', truncating='pre')
-    np.save(args.output_dir + "image_np_tr" + str(i) + ".npy", np.array(image_list))
-    np.save(args.output_dir + "other_np_tr" + str(i) + ".npy", other_np)
-    np.save(args.output_dir + "text_np_tr" + str(i) + ".npy", np.array(text_list))
-    np.save(args.output_dir + "w_image_np_tr" + str(i) + ".npy", np.array(w_image_list))
-    np.save(args.output_dir + "w_other_np_tr" + str(i) + ".npy", np.array(w_other_list))
-    np.save(args.output_dir + "w_text_np_tr" + str(i) + ".npy", np.array(w_text_list))
-    np.save(args.output_dir + "activity_id_tr" + str(i) + ".npy", np.array(activity_id_list))
-    np.save(args.output_dir + "widget_id_tr" + str(i) + ".npy", np.array(widget_id_list))
-    del activity_id_list, widget_id_list
-    del image_list, other_list, text_list, w_image_list, w_other_list, w_text_list
+                widget_id_list_t.append(widget_list.index(eachapp + "/" + eachxml[:-4] + ": " +resource_id+": "+ bounds))
+            activity_id_list_t.append(activity_list.index(eachapp + "/" + eachxml[:-4]))
 
-    # test data set
-    activity_id_t, widget_id_t = 0, 0
-    image_list_t, uitree_list_t, text_list_t, other_list_t = [], [], [], []
-    w_image_list_t, w_uitree_list_t, w_text_list_t, w_other_list_t = [], [], [], []
-    activity_list_t, widget_list_t = [], []
-    activity_id_list_t, widget_id_list_t = [], []
-    for eachapp in test_app_list:
-        xmllist = os.listdir(args.groundtruth_dir + "/XML/" + eachapp)
-        for eachxml in xmllist:
-            # widget information
-            DOMTree = xml.dom.minidom.parse(args.groundtruth_dir + "/XML/" + eachapp + "/" + eachxml)
-            collection = DOMTree.documentElement
-            for each in collection.getElementsByTagName("node"):
-                resource_id = each.getAttribute('resource-id')
-                wclass = each.getAttribute('class').split('.')[-1]
-                text = each.getAttribute('text')
-                bounds = each.getAttribute('bounds')
-                x, y, width, height = get_other(bounds)
-                total, cnt = get_text(text)
-                img = crop_image(args.groundtruth_dir + "/XML/" + eachapp + "/" + eachxml[:-4] + ".png", 
-                    x, y, width, height)
-                w_image_list_t.append(img)
-                w_text_list_t.append(total)
-                w_other_list_t.append([x, y, width, height])
-                w_uitree_list_t.append(wclass)
-                widget_id_list_t.append(eachapp + "/" + eachxml[:-4] + ": " +resource_id+": "+ bounds)
-            # activity information
-            image_list_t.append(
-                get_image(args.groundtruth_dir + "/Screenshot/" + eachapp + "/" + eachxml[:-4] + ".png"))
-            tree = ET.ElementTree(file=args.groundtruth_dir + "/XML/" + eachapp + "/" + eachxml)
-            root = tree.getroot()
-            total_cnt, total_text, total_other, total_tag = get_tags(root[0])
-            uitree_list_t.append(total_tag)
-            other_list_t.append(total_other)
-            text_list_t.append(total_text)
-            activity_list_t.append(eachapp + "/" + eachxml)
-            activity_id_list_t.append(eachapp + "/" + eachxml[:-4])
-    other_np = pad_sequences(np.array(other_list_t), maxlen=128, dtype='float32', 
-        padding='post', truncating='pre')
-    np.save(args.output_dir + "image_np_t" + str(i) + ".npy", np.array(image_list_t))
-    np.save(args.output_dir + "other_np_t" + str(i) + ".npy", other_np)
-    np.save(args.output_dir + "text_np_t" + str(i) + ".npy", np.array(text_list_t))
-    np.save(args.output_dir + "w_image_np_t" + str(i) + ".npy", np.array(w_image_list_t))
-    np.save(args.output_dir + "w_other_np_t" + str(i) + ".npy", np.array(w_other_list_t))
-    np.save(args.output_dir + "w_text_np_t" + str(i) + ".npy", np.array(w_text_list_t))
     np.save(args.output_dir + "activity_id_t" + str(i) + ".npy", np.array(activity_id_list_t))
     np.save(args.output_dir + "widget_id_t" + str(i) + ".npy", np.array(widget_id_list_t))
-    del activity_id_list_t, widget_id_list_t
-    del image_list_t, other_list_t, text_list_t, 
-    del w_image_list_t, w_other_list_t, w_text_list_t
+    for j in range(len(widget_list)):
+        if j in widget_id_list_t:
+            continue
+        widget_id_list.append(j)
+    for j in range(len(activity_list)):
+        if j in activity_id_list_t:
+            continue
+        activity_id_list.append(j)
+    np.save(args.output_dir + "activity_id_tr" + str(i) + ".npy", np.array(activity_id_list))
+    np.save(args.output_dir + "widget_id_tr" + str(i) + ".npy", np.array(widget_id_list))
     
-    t_tmp_np = []
-    for eachuitree in uitree_list2:
-        ttt = []
-        for eachtag in eachuitree:
-            embedding = all_tags_dict.get(eachtag, None)
-            if embedding is not None:
-                ttt.append(embedding)
-            else:
-                ttt.append(all_tags_dict.get("unknown", None))
-        t_tmp_np.append(ttt)
-    tmp_np = np.array(t_tmp_np)
-    uitree_np2 = pad_sequences(tmp_np, maxlen=256, dtype='float32', 
-        padding='post', truncating='pre')
-    np.save(args.output_dir + "uitree_np_tr" + str(i) + ".npy", uitree_np2)
-
-    t_tmp_np = []
-    for eachuitree in uitree_list_t:
-        ttt = []
-        for eachtag in eachuitree:
-            embedding = all_tags_dict.get(eachtag, None)
-            if embedding is not None:
-                t_tmp_np.append(embedding)
-            else:
-                t_tmp_np.append(all_tags_dict.get("unknown", None))
-        t_tmp_np.append(ttt)
-    tmp_np = np.array(t_tmp_np)
-    uitree_np_t = pad_sequences(tmp_np, maxlen=256, dtype='float32', 
-        padding='post', truncating='pre')
-    np.save(args.output_dir + "uitree_np_t" + str(i) + ".npy", uitree_np_t)
-
-    tmp_np = np.array(w_uitree_list)
-
-    t_tmp_np = []
-    for eachtag in tmp_np:
-        embedding = all_tags_dict.get(eachtag, None)
-        if embedding is not None:
-            t_tmp_np.append(embedding)
-        else:
-            t_tmp_np.append(all_tags_dict.get("unknown", None))
-    tmp_np = np.array(t_tmp_np)
-    np.save(args.output_dir + "w_uitree_np_tr" + str(i) + ".npy", tmp_np)
-    tmp_np = np.array(w_uitree_list_t)
-
-    t_tmp_np = []
-    for eachtag in tmp_np:
-        embedding = all_tags_dict.get(eachtag, None)
-        if embedding is not None:
-            t_tmp_np.append(embedding)
-        else:
-            t_tmp_np.append(all_tags_dict.get("unknown", None))
-    tmp_np = np.array(t_tmp_np)
-    np.save(args.output_dir + "w_uitree_np_t" + str(i) + ".npy", tmp_np)
-    del uitree_list2, uitree_list_t, uitree_np_t, w_uitree_list, w_uitree_list_t, tmp_np
-    
-    # get positive pairs in groundtruth
-    positive_pairs = []
-    for eachapp in train_app_list:
-        f = open(groundtruth_path + eachapp + ".dot", 'r')
-        try:
-            while True:
-                line = f.readline()
-                parse = line.split("\\n")
-                if len(parse) == 1:
-                    break
-                if len(parse) != 7:
-                    continue
-                source = parse[-2]
-                target = parse[-1][:-1]
-                if parse[2] == "back" or parse[2] == "menu" or parse[2] == "lauch":
-                    continue
-                source_widget_index = -1
-                idx = 0
-                for eachwidget in widget_list:
-                    if eachwidget.split(":")[0] == eachapp + "/" + source:
-                        if is_widget(parse[3], parse[4], eachwidget):
-                            source_widget_index = idx
-                    idx += 1
-                if source_widget_index == -1:
-                    print(parse[2], parse[3], parse[4], "not found")
-                    continue
-                target_activity_name = eachapp + "/" + target
-                positive_pairs.append([source_widget_index, 
-                    activity_list.index(target_activity_name)])
-        finally:
-            f.close()
-
-    np.save(args.output_dir + "positive_pairs" + str(i) + ".npy",
-        np.array(positive_pairs))
-
-    positive_pairs_t = []
-    for eachapp in test_app_list:
-        f = open(groundtruth_path + eachapp + ".dot", 'r')
-        try:
-            while True:
-                line = f.readline()
-                parse = line.split("\\n")
-                if len(parse) == 1:
-                    break
-                if len(parse) != 11:
-                    continue
-                source = parse[-2]
-                target = parse[-1][:-1]
-                if parse[2] == "back" or parse[2] == "menu" or parse[2] == "lauch":
-                    continue
-                source_widget_index = -1
-                idx = 0
-                for eachwidget in widget_list:
-                    if eachwidget.split(":")[0] == eachapp + "/" + source:
-                        if is_widget(parse[-4], parse[-3], eachwidget):
-                            source_widget_index = idx
-                    idx += 1
-                if source_widget_index == -1:
-                    print(parse[2], parse[-4], parse[-3], "not found")
-                    continue
-                target_activity_name = eachapp + "/" + target
-                positive_pairs_t.append([source_widget_index, activity_list.index(target_activity_name)])
-        finally:
-            f.close()
-    np.save(args.output_dir + "positive_pairs_t" + str(i) + ".npy",
-            np.array(positive_pairs_t))
+    positive_pairs_tr, positive_pairs_t = [], []
+    for eachpair in all_positive_pairs:
+        if eachpair[0] in widget_id_list and eachpair[1] in activity_id_list:
+            positive_pairs_tr.append(eachpair)
+        elif eachpair[0] in widget_id_list_t and eachpair[1] in activity_id_list_t:
+            positive_pairs_t.append(eachpair)
+    np.save(args.output_dir + "positive_pairs_tr" + str(i) + ".npy", np.array(positive_pairs_tr))
+    np.save(args.output_dir + "positive_pairs_t" + str(i) + ".npy", np.array(positive_pairs_t))
+    del activity_id_list_t, widget_id_list_t, activity_id_list, widget_id_list

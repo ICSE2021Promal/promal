@@ -182,9 +182,9 @@ for epoch in range(10):
         else:
             p.append(0)
     p = np.array(p)
-    print(classification_report(shuffled_labels_t, p))
+    print(classification_report(shuffled_labels_t, p, digits=4))
     del p, pred1
     del shuffled_pair, shuffled_labels
 
-    siamese_model.save(args.output_dir + "finetuned_model" + str(epoch) + ".h5")
+    siamese_model.save(args.output_dir + "finetuned_model_" + str(epoch) + ".h5")
     del positive_pairs, positive_pairs_t

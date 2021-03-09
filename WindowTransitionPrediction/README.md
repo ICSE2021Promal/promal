@@ -5,7 +5,7 @@ Window transition learning contains the deep learning model to learn the transit
 This is an example prediction using the window transition model. The screen snapshots, texts and UI layout trees of the source window and the target window are shown. The image, text and UI layout information of the source widget are highlighted with red frames.
 
 <figure>
-    <img src="prediction-example.png" width=800>
+    <img src="prediction-example.pdf" width=800>
 </figure>
 
 ## Introduction
@@ -38,6 +38,8 @@ The text information of each widget and window need to be extracted by a pre-tra
 As for UI layout tree features, you should traverse all widgets on the UI layout of an app window via in-order tree traversal to generate a widget sequence. The figure above shows how the tags and other information in a UI layout tree is unrolled to a sequence. The sequences should be saved as numpy as well. The tags, positions and size of each widget should also be saved as numpys in the same format. 
 There needs to be a page_list.txt with all the names of the windows in the dataset, one name in each line. For example, the name of the window in app "com.example" with screen snapshot "examplewindow.png" is "com.example/examplewindow". There should also be a json file named "all_tags_dict.json" that can map each widget tag to a one-hot embedding. 
 
+The apps for pre-training in our experiment are listed in [pretrain_apps.txt](https://github.com/ICSE2021Promal/promal/blob/master/WindowTransitionPrediction/pretrain_apps.txt)
+
 + Input.
 Pre-processed Paladin data, Word2Vec model, page list file and tag dict file.
 + Output.
@@ -54,7 +56,7 @@ python pre-train.py --data_dir <DATASET_DIR> --paladin_dir <PALADIN_DIR> --outpu
 Pre-process the groundtruth data and the data collected by static analysis tools and save the data as numpy files. It also splits the ground truth data into training and testing sets for 10-fold cross validation.
 
 + Input.
-Groundtruth data and the data collected by static analysis tools. The Word2Vec model and the tag dict introduced in the [Pre-Training Entry Point](https://github.com/ICSE2021Promal/Promal/tree/master/WindowTransitionLearning#pre-train).
+Groundtruth data and the data collected by static analysis tools. The Word2Vec model and the tag dict introduced in the [Pre-Training Entry Point](https://github.com/ICSE2021Promal/promal/tree/master/WindowTransitionPrediction#pre-train).
 
 + Output.
 Numpy files needed for fine-tuning and prediction. The length of each numpy file is the total number of widgets or windows in the pre-processed dataset. Note that there should be enough space on disk for the output data.
