@@ -5,7 +5,7 @@ Window transition learning contains the deep learning model to learn the transit
 This is an example prediction using the window transition model. The screen snapshots, texts and UI layout trees of the source window and the target window are shown. The image, text and UI layout information of the source widget are highlighted with red frames.
 
 <figure>
-    <img src="prediction-example.pdf" width=800>
+    <img src="prediction-example.png" width=800>
 </figure>
 
 ## Introduction
